@@ -4,6 +4,10 @@ using System.Text;
 using Shop.Models;
 using Shop.Interafaces;
 using System.Threading;
+using System.Xml;
+using Newtonsoft.Json;
+using Formatting = Newtonsoft.Json.Formatting;
+using System.Net;
 
 namespace Shop
 {
@@ -57,6 +61,107 @@ namespace Shop
                 }
                 Console.Clear();
             }
+        }
+
+        public void StartServer()
+        {
+            var httpListener = new HttpListener();
+            httpListener.Prefixes.Add("http://localhost:51369/");
+            httpListener.Start();
+
+            ShowCase store = new ShowCase();
+
+            productStores = new List<ShowCase>
+            {
+                new ShowCase("Игрушки для взрослых", 20,0),
+                new ShowCase("Латексные изделия", 50,1),
+                new ShowCase("Костюмы для ролевых игр",35,2)
+            };
+
+            //var issueList = new IssueList(1000);
+
+            while (true)
+            {
+                var requestContext = httpListener.GetContext();
+                requestContext.Response.StatusCode = 200; //OK
+
+                //      requestContext.Response.Close();
+
+                var request = requestContext.Request;
+                var responseValue = "";
+                if (request.Url.PathAndQuery == "/FirstMenu")
+                {
+                    switch (request.HttpMethod)
+                    {
+                        case "GET":
+                            requestContext.Response.StatusCode = 200; //OK
+
+                           // var _productStores = productStores;
+                            responseValue = JsonConvert.SerializeObject(productStores, Formatting.Indented);
+                            break;
+                        case "POST":
+                            requestContext.Response.StatusCode = 200; //OK
+                            responseValue = "Tipo POST";
+
+ 
+
+                            //CreateProductStore();
+                            break;
+                        case "GET2":
+                            List<ShowCase> productStores123 = new List<ShowCase>();
+                                break;
+
+                        case "PUT":
+                            requestContext.Response.StatusCode = 200; //OK
+                            responseValue = "EDIT_ISSUE";
+                            break;
+
+                        default:
+                            requestContext.Response.StatusCode = 500; //OK
+                            responseValue = "Что то пошло не так";
+                            break;
+                    }
+                }
+
+
+                if (request.Url.PathAndQuery == "/SecondMenu")
+                {
+                    switch (request.HttpMethod)
+                    {
+                        case "GET":
+                            requestContext.Response.StatusCode = 200; //OK
+
+                            var _productStores = productStores;
+                            responseValue = JsonConvert.SerializeObject(_productStores, Formatting.Indented);
+                            break;
+
+                        case "POST":
+                            requestContext.Response.StatusCode = 200; //OK
+                            responseValue = "Tipo POST";
+                            break;
+
+                        case "PUT":
+                            requestContext.Response.StatusCode = 200; //OK
+                            responseValue = "EDIT_ISSUE";
+                            break;
+
+                        default:
+                            requestContext.Response.StatusCode = 500; //OK
+                            responseValue = "Что то пошло не так";
+                            break;
+                    }
+                }
+
+                var stream = requestContext.Response.OutputStream;
+                var bytes = Encoding.UTF8.GetBytes(responseValue);
+                stream.Write(bytes, 0, bytes.Length);
+                requestContext.Response.Close();
+
+
+            }
+
+            httpListener.Stop();
+            httpListener.Close();
         }
 
         //Создание витрины
@@ -116,7 +221,7 @@ namespace Shop
                         $"Указанный размер {number} меньше нынешнего размера {store.Size} на {store.Size - number}");
                 }
             } while (true);
-            Thread.Sleep(3000);
+            // Thread.Sleep(3000);
         }
 
         //Удаление витрины
@@ -146,7 +251,7 @@ namespace Shop
                         $"Витрина [{store.Name}] не очищена и имеет в себе товары");
 
             }
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
         }
 
         //Действия с витриной
@@ -165,7 +270,7 @@ namespace Shop
                 }
             }
             Console.Clear();
-
+            var responseValue = "";
             bool isContinue = true;
             while (isContinue)
             {
@@ -188,7 +293,8 @@ namespace Shop
                         store.RemoveProduct(store);
                         break;
                     case '3':
-                        store.ShowProducts(store);
+                        var _productStores = productStores;
+                        responseValue = JsonConvert.SerializeObject(_productStores, Formatting.Indented);
                         break;
                     case '4':
                         isContinue = false;

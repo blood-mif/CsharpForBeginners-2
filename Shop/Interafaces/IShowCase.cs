@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Shop.Models;
+using ShopModels;
 namespace Shop.Interafaces
 {
     interface IShowCase

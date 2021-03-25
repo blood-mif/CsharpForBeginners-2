@@ -3,26 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using Shop.Interafaces;
 using System.Threading;
+using ShopModels;
 
 namespace Shop.Models
 {
-    public class ShowCase : IShowCase
+    public class ShowCase1 : ShowCase
     {
-        public uint Id { get; set; }
-        public string Name { get; set; }
-        public int Size { get; set; }
-        public DateTime CreationTime { get; set; }
-        public DateTime RemovalTime { get; set; }
 
         public List<Product> Products = new List<Product>();
-        public ShowCase() { }
-        public ShowCase(string name, int size, uint id)
-        {
-            Id = id;
-            Name = name;
-            Size = size;
-            CreationTime = DateTime.Now;
-        }
 
         public void AddProduct(ShowCase showCase)
         {

@@ -6,8 +6,10 @@ namespace Shop
     {
         static void Main(string[] args)
         {
-            StartProgram program = new StartProgram();
-            program.Start();
+            //  StartProgram program = new StartProgram();
+            //  program.Start();
+            StartProgram StartServer = new StartProgram();
+            StartServer.StartServer();
         }
     }
 }
