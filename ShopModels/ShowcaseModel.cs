@@ -1,14 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Shop.Interafaces;
-using System.Threading;
-using ShopModels;
 
-namespace Shop
+namespace ShopModels
 {
-    public class Showcase 
+    public class ShowcaseModel 
     {
+    
+        public uint Id { get; set; }
+        public string Name { get; set; }
+        public int Size { get; set; }
+        public DateTime CreationTime { get; set; }
+        public DateTime RemovalTime { get; set; }
+        public ShowcaseModel() { }
+        public ShowcaseModel(string name, int size, uint id)
+        {
+            Id = id;
+            Name = name;
+            Size = size;
+            CreationTime = DateTime.Now;
+        }
 
         public List<Product> Products = new List<Product>();
 
@@ -47,7 +57,7 @@ namespace Shop
                 Console.WriteLine("Укажите размер товара:");
                 string size = Console.ReadLine();
 
-                if(CheckCorrectInput(size) == true)
+                if (CheckCorrectInput(size) == true)
                 {
                     int sizeProduct = Convert.ToInt32(size);
 
@@ -105,7 +115,6 @@ namespace Shop
             Console.WriteLine($"Товар: {product.Name}, успешо добавлен на прилавок [{showCase.Name}]");
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            Thread.Sleep(3000);
         }
 
         public void RemoveProduct(ShowcaseModel showCase)
@@ -129,7 +138,6 @@ namespace Shop
             Console.ForegroundColor = ConsoleColor.Gray;
 
             showCase.Size += product.OccupiedSize;
-            Thread.Sleep(3000);
         }
 
         public void ShowProducts(ShowcaseModel showCase)
@@ -163,9 +171,9 @@ namespace Shop
                 return false;
             }
 
-            foreach(char symb in forbiddeSymbols)
+            foreach (char symb in forbiddeSymbols)
             {
-                foreach(char symbProd in productName)
+                foreach (char symbProd in productName)
                 {
                     if (symbProd == symb)
                     {

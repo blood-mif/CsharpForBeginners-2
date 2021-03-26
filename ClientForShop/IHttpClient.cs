@@ -9,7 +9,7 @@ namespace ClientForShop
     {
         //MenuModel GetMenu();
         void SelectMenuItem(int menuItemId, int quantity);
-        MenuModel GetShowcaseList();
+        ListShowcaseModel GetShowcaseList();
 
         void CreateNewShowcase(string nameShowcase, int sizeShowcase);
         //OrderModel GetOrder();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Shop.Models;
 using ShopModels;
 namespace Shop.Interafaces
 {
@@ -14,9 +13,9 @@ namespace Shop.Interafaces
          DateTime RemovalTime { get; set; }
 
 
-        void ShowProducts(ShowCase showCase);
-        void AddProduct(ShowCase showCase);
-        void RemoveProduct(ShowCase showCase);
+        void ShowProducts(ShowcaseModel showCase);
+        void AddProduct(ShowcaseModel showCase);
+        void RemoveProduct(ShowcaseModel showCase);
         
     }
 }

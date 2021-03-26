@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ShopModels;
 
-namespace Shop.Models
+namespace ShopModels
 {
     public class Product
     {

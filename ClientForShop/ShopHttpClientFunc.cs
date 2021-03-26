@@ -19,12 +19,12 @@ namespace ClientForShop
             throw new NotImplementedException();
         }
 
-        public MenuModel GetShowcaseList()
+        public ListShowcaseModel GetShowcaseList()
         {
             var response = _client.GetAsync("FirstMenu").Result;
             var content = response.Content.ReadAsStringAsync().Result;
 
-            return JsonConvert.DeserializeObject<MenuModel>(content);
+            return JsonConvert.DeserializeObject<ListShowcaseModel>(content);
         }
 
         public void CreateNewShowcase(string nameShowcase, int sizeShowcase)
@@ -37,7 +37,7 @@ namespace ClientForShop
 
             var json = JsonConvert.SerializeObject(request);
             var content = new StringContent(json);
-            var response = _client.PostAsync("order", content).Result;
+            var response = _client.PostAsync("FirstMenu", content).Result;
         }
     }
 
