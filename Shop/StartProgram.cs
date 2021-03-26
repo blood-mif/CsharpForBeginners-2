@@ -8,14 +8,16 @@ using Newtonsoft.Json;
 using Formatting = Newtonsoft.Json.Formatting;
 using System.Net;
 using ShopModels;
+using System.Linq;
 
 namespace Shop
 {
-    public class StartProgram 
+    public class StartProgram
     {
         public ConsoleKeyInfo keyInfo;
         public List<ShowcaseModel> productStores;
         public uint IdForShowWindow = 3;
+        String StatusFunc = "";
         public void Start()
         {
             //Дефолтное добавление витрин в магазин
@@ -89,74 +91,75 @@ namespace Shop
 
                 var request = requestContext.Request;
                 var responseValue = "";
-                if (request.Url.PathAndQuery == "/FirstMenu")
+
+                switch (request.HttpMethod)
                 {
-                    switch (request.HttpMethod)
-                    {
-                        case "GET":
+                    case "GET":
+
+                            if (request.Url.PathAndQuery == "/PrintShowcase")
+                        {
                             requestContext.Response.StatusCode = 200; //OK
 
-                            var _productStores = productStores;
+                            var _productStores = new ListShowcaseModel()
+                            {
+                                Items = productStores.Select(dat =>
+                                new ShowcaseItemRequestModel
+                                {
+                                    Id = (int)dat.Id,
+                                    Name = dat.Name,
+                                    CreationTime = dat.CreationTime,
+                                    RemovalTime = dat.RemovalTime,
+                                    Size = dat.Size
+                                }).ToArray()
+                            };
+
                             responseValue = JsonConvert.SerializeObject(_productStores, Formatting.Indented);
-                            break;
-                        case "POST":
+                        }
+                        break;
+                    case "POST":
+
                             requestContext.Response.StatusCode = 200; //OK
+                            var InpStream = requestContext.Request.InputStream;
+                            var bytemas = new byte[requestContext.Request.ContentLength64];
+                            InpStream.ReadAsync(bytemas, 0, (int)requestContext.Request.ContentLength64);
+                            var content = Encoding.UTF8.GetString(bytemas);
+                            var showcaseItemValue = JsonConvert.DeserializeObject<ShowcaseItemRequestModel>(content);
 
-                            JsonConvert.DeserializeObject<ShowcaseItemRequestModel>(content);
-                            responseValue = "Tipo POST";
-                            string name = "";int size = 1;
-                            CreateProductStore(name,size);
-                            break;
-                        case "GET2":
-                            List<ShowcaseModel> productStores123 = new List<ShowcaseModel>();
-                                break;
+                        if (request.Url.PathAndQuery == "/AddShowcase")
+                        {
+                            productStores.Add(CreateProductStore(showcaseItemValue.Name, showcaseItemValue.Size));
+                        }
+                        if (request.Url.PathAndQuery == "/DeleteShowcase")
+                        {
+                           
+                            productStores.RemoveAt((int)showcaseItemValue.Id);
+                        }
+                        if (request.Url.PathAndQuery == "/EdditShowcase")
+                        {
+                            responseValue = EditProductStore((uint)showcaseItemValue.Id, showcaseItemValue.Size);
+                            StatusFunc = responseValue;
+                            
 
-                        case "PUT":
-                            requestContext.Response.StatusCode = 200; //OK
-                            responseValue = "EDIT_ISSUE";
-                            break;
+                        }
 
-                        default:
-                            requestContext.Response.StatusCode = 500; //OK
-                            responseValue = "Что то пошло не так";
-                            break;
-                    }
-                }
+                        break;
 
 
-                if (request.Url.PathAndQuery == "/SecondMenu")
-                {
-                    switch (request.HttpMethod)
-                    {
-                        case "GET":
-                            requestContext.Response.StatusCode = 200; //OK
+                    case "PUT":
+                        requestContext.Response.StatusCode = 200; //OK
+                        responseValue = "EDIT_ISSUE";
+                        break;
 
-                            var _productStores = productStores;
-                            responseValue = JsonConvert.SerializeObject(_productStores, Formatting.Indented);
-                            break;
-
-                        case "POST":
-                            requestContext.Response.StatusCode = 200; //OK
-                            responseValue = "Tipo POST";
-                            break;
-
-                        case "PUT":
-                            requestContext.Response.StatusCode = 200; //OK
-                            responseValue = "EDIT_ISSUE";
-                            break;
-
-                        default:
-                            requestContext.Response.StatusCode = 500; //OK
-                            responseValue = "Что то пошло не так";
-                            break;
-                    }
+                    default:
+                        requestContext.Response.StatusCode = 500; //OK
+                        responseValue = "Что то пошло не так";
+                        break;
                 }
 
                 var stream = requestContext.Response.OutputStream;
                 var bytes = Encoding.UTF8.GetBytes(responseValue);
                 stream.Write(bytes, 0, bytes.Length);
                 requestContext.Response.Close();
-
 
             }
 
@@ -174,6 +177,7 @@ namespace Shop
             return new ShowcaseModel(name, size, IdForShowWindow);
         }
 
+        //Перегрузка метода для http
         public ShowcaseModel CreateProductStore(string name, int size)
         {
             return new ShowcaseModel(name, size, IdForShowWindow);
@@ -228,6 +232,46 @@ namespace Shop
             } while (true);
             // Thread.Sleep(3000);
         }
+
+        //Перегрузка метода для http
+        public string EditProductStore(uint id, int size)
+        {
+            //ShowProductStores(productStores);
+            //Console.WriteLine("\nВыберите Id витрины для редактирования");
+            //int number = int.Parse(Console.ReadLine());
+
+            ShowcaseModel store = new ShowcaseModel();
+
+            for (int i = 0; i < productStores.Count; i++)
+            {
+                if (id == productStores[i].Id)
+                {
+                    store = productStores[i];
+                    break;
+                }
+            }
+
+                var requestValue = "";
+            do
+            {
+                int number = size;
+                if (store.Products != null || store.Size < number)
+                {
+                    store.Size = number;
+                    requestValue = $"На витрине - { store.Name}, установлен новый размер { store.Size}";
+
+                    break;
+                }
+                else
+                {
+                    requestValue =$"Ошибка..\n" +
+                        $"Указанный размер {number} меньше нынешнего размера {store.Size} на {store.Size - number}";
+                }
+            } while (true);
+            return requestValue;
+            // Thread.Sleep(3000);
+        }
+
 
         //Удаление витрины
         public void RemoveProductStore(List<ShowcaseModel> productStores)

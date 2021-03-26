@@ -21,7 +21,7 @@ namespace ClientForShop
 
         public ListShowcaseModel GetShowcaseList()
         {
-            var response = _client.GetAsync("FirstMenu").Result;
+            var response = _client.GetAsync("PrintShowcase").Result;
             var content = response.Content.ReadAsStringAsync().Result;
 
             return JsonConvert.DeserializeObject<ListShowcaseModel>(content);
@@ -37,7 +37,36 @@ namespace ClientForShop
 
             var json = JsonConvert.SerializeObject(request);
             var content = new StringContent(json);
-            var response = _client.PostAsync("FirstMenu", content).Result;
+            var response = _client.PostAsync("AddShowcase", content).Result;
+        }
+        public void DeleteShowcase(int idShowcase)
+        {
+            var request = new ShowcaseItemRequestModel
+            {
+                Id = idShowcase
+            };
+
+            var json = JsonConvert.SerializeObject(request);
+            var content = new StringContent(json);
+            var response = _client.PostAsync("DeleteShowcase", content).Result;
+        }
+
+
+        public string EdditShowcase(int idShowcase,int sizeShowcase)
+        {
+            var request = new ShowcaseItemRequestModel
+            {
+                Id = idShowcase,
+                Size = sizeShowcase
+            };
+
+            var json = JsonConvert.SerializeObject(request);
+            var content = new StringContent(json);
+            var response = _client.PostAsync("EdditShowcase", content).Result;
+            var content1 = response.Content.ReadAsStringAsync().Result;
+            return content1;
+
+
         }
     }
 

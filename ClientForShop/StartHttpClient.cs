@@ -17,7 +17,7 @@ namespace ClientForShop
         internal void Start()
         {
             
-            Console.OutputEncoding = Encoding.UTF8;
+           // Console.OutputEncoding = Encoding.UTF8;
             bool isContinue = true;
 
             while (isContinue)
@@ -50,7 +50,9 @@ namespace ClientForShop
                         break;
 
                     case Operations.OPERATIONS_WITH_PRODUCT:
-                        OpenMenuOpetationsWithProduct();
+
+                        Console.WriteLine("Аналогично, что и с витринами");
+                        //OpenMenuOpetationsWithProduct();
                         break;
 
                     case Operations.EXIT:
@@ -97,18 +99,28 @@ namespace ClientForShop
 
         private void EditShowcase()
         {
-            var httpClient = new HttpClient();
-            var response = httpClient.PutAsync("http://localhost:51369/FirstMenu", null).Result;
-            var content = response.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(content);
+            PrintShowcaseList();
+            Console.WriteLine("Введите id витрины");
+            var userAnswer = Console.ReadLine();
+            var idShowcase = int.Parse(userAnswer);
+
+            Console.WriteLine("Введите вместимость витрины");
+            userAnswer = Console.ReadLine();
+            var sizeShowcaseFromClient = int.Parse(userAnswer);
+
+            //_httpClient.EdditShowcase(idShowcase, sizeShowcaseFromClient);
+
+
+            Console.WriteLine(_httpClient.EdditShowcase(idShowcase, sizeShowcaseFromClient));
         }
 
         private void DeliteShowcase()
         {
-            var httpClient = new HttpClient();
-            var response = httpClient.DeleteAsync("http://localhost:51369/FirstMenu").Result;
-            var content = response.Content.ReadAsStringAsync().Result;
-            Console.WriteLine(content);
+            Console.WriteLine("Введите id витрины");
+            var userAnswer = Console.ReadLine();
+            var idShowcase = int.Parse(userAnswer);
+
+            _httpClient.DeleteShowcase(idShowcase);
         }
 
         private void OpenMenuOpetationsWithProduct()

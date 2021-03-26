@@ -12,6 +12,9 @@ namespace ClientForShop
         ListShowcaseModel GetShowcaseList();
 
         void CreateNewShowcase(string nameShowcase, int sizeShowcase);
+
+        void DeleteShowcase(int idShowcase);
+        string EdditShowcase(int idShowcase, int sizeShowcase);
         //OrderModel GetOrder();
     }
 }
